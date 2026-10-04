@@ -1,12 +1,18 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:universal_html/html.dart' show window;
 import 'package:universal_platform/universal_platform.dart';
 
+import 'web_navigator_platform_stub.dart'
+    if (dart.library.js_interop) 'web_navigator_platform_web.dart';
+
 extension PlatformExtension on Platform {
-  static String get _webPlatform =>
-      window.navigator.platform?.toLowerCase() ?? '';
+  /// Browser `navigator.platform`, lowercased. Empty off the web.
+  ///
+  /// Loaded through `package:web` (`dart.library.js_interop`) so this library
+  /// compiles to WebAssembly. `universal_html` exports `dart:html`, which the
+  /// Wasm compiler rejects.
+  static String get _webPlatform => webNavigatorPlatform().toLowerCase();
 
   /// Returns true if the operating system is macOS and not running on Web platform.
   static bool get isMacOS => UniversalPlatform.isMacOS;
